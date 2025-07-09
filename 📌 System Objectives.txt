@@ -1,0 +1,141 @@
+📌 System Objectives
+
+    Digitize Application Processes
+    Build a secure online portal for candidates to submit applications and supporting documents.
+
+    Streamline Multi-Role Workflows
+    Allow each user role to seamlessly review, annotate, forward, and approve applications within the system.
+
+    Enable Collaborative Committee Reviews
+    Provide JTC members with an online workspace to review applications, comment, and vote with notification support.
+
+    Automate Recommendation Generation
+    Develop a rules engine that aggregates votes and generates automated recommendations.
+
+    Provide Real-Time Reporting and Auditing
+    Implement dashboards for key performance indicators and ensure full traceability with immutable audit logs.
+
+    Ensure System Security and Performance
+    Secure the system using modern encryption, authentication (Laravel Sanctum), and ensure system responsiveness for up to 5,000 concurrent users.
+
+✅ Functional Requirements (for Laravel Code Development)
+1. User Management
+
+    Roles: Candidate, District Court Clerk, Training Officer, JTC Member, Chairperson, System Administrator.
+
+    Functions:
+
+        User registration, login, password reset (Laravel Sanctum for API auth).
+
+        Role-based access control (middleware).
+
+2. Application Intake Module
+
+    Document upload (PDF, JPEG) with validation.
+
+    Form validation and automated acknowledgment emails.
+
+    Laravel file storage structure for managing uploads.
+
+3. Review Module
+
+    Application queue management per user role.
+
+    Status tracking (Pending, Under Review, Awaiting Additional Info, Forwarded, Completed).
+
+    Annotation tools for adding comments and requesting additional documents.
+
+    Escalation path (forwarding to the next role).
+
+4. Committee Module
+
+    View complete application packet with downloadable documents.
+
+    Collaborative commenting.
+
+    Voting interface with threshold logic.
+
+    Automated meeting minutes capture.
+
+5. Recommendation Engine
+
+    Aggregate committee votes using customizable rules (weighting, majority, etc.).
+
+    Generate system-based recommendation reports.
+
+    Chairperson decision interface to approve, reject, or request revisions.
+
+6. Notification System
+
+    Real-time notifications (email, dashboard alerts) for:
+
+        New submissions.
+
+        Required actions.
+
+        Final decisions.
+
+7. Reporting & Dashboards
+
+    KPI tracking:
+
+        Average review time.
+
+        Backlog size.
+
+        Workload per officer.
+
+        Decision trends.
+
+    Custom report builder.
+
+    Role-specific dashboards.
+
+8. Audit & Access Logs
+
+    Track all actions (viewed, commented, approved, forwarded).
+
+    Immutable logs for security and accountability.
+
+9. Administrative Tools
+
+    Manage system users and roles.
+
+    Configuration settings (voting rules, document size limits, etc.).
+
+    System maintenance and data backup options.
+
+🗃️ Suggested Data Structure (Database Design)
+Key Tables:
+
+    users (id, name, email, password, role, status)
+
+    applications (id, user_id, status, submitted_at, reviewed_at)
+
+    documents (id, application_id, file_path, file_type)
+
+    reviews (id, application_id, reviewer_id, comments, status, forwarded_to)
+
+    committee_votes (id, application_id, jtc_member_id, vote, comment)
+
+    recommendations (id, application_id, final_decision, report_path)
+
+    notifications (id, user_id, message, is_read)
+
+    audit_logs (id, user_id, action, description, created_at)
+
+    kpi_metrics (id, metric_name, value, calculated_at)
+
+⚙️ Laravel-Specific Technologies to Implement
+
+    Authentication: Laravel Sanctum (SPA token-based auth).
+
+    Queue Management: Laravel Queues with Redis for background jobs (notifications, report generation).
+
+    API Development: RESTful API endpoints.
+
+    File Handling: Laravel Storage for uploads.
+
+    Event Broadcasting: Laravel Echo (optional) for real-time updates.
+
+    Security: CSRF protection, HTTPS, AES-256 encryption for sensitive files.

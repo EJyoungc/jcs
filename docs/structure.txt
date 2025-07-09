@@ -1,0 +1,142 @@
+// Migrations Structure
+
+// Users Table (roles: procurement_officer, supplier, department_head, finance_officer)
+Schema::create('users', function (Blueprint $table) {
+    $table->id();
+    $table->string('name');
+    $table->string('email')->unique();
+    $table->string('password');
+    $table->enum('role', ['procurement_officer', 'supplier', 'department_head', 'finance_officer']);
+    $table->foreignId('department_id')->nullable()->constrained('departments');
+    $table->rememberToken();
+    $table->timestamps();
+});
+
+// Suppliers Table
+Schema::create('suppliers', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('user_id')->constrained();
+    $table->string('company_name');
+    $table->string('contact_person');
+    $table->string('phone');
+    $table->text('address');
+    $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+    $table->timestamps();
+});
+
+// Departments Table
+Schema::create('departments', function (Blueprint $table) {
+    $table->id();
+    $table->string('name');
+    $table->text('description')->nullable();
+    $table->timestamps();
+});
+
+// Purchase Requests Table
+Schema::create('purchase_requests', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('user_id')->constrained(); // Requester
+    $table->foreignId('department_id')->constrained();
+    $table->text('items');
+    $table->text('specifications');
+    $table->decimal('estimated_cost', 10, 2);
+    $table->enum('status', ['draft', 'submitted', 'approved', 'rejected', 'completed']);
+    $table->timestamps();
+});
+
+// Tenders Table
+Schema::create('tenders', function (Blueprint $table) {
+    $table->id();
+    $table->string('title');
+    $table->text('description');
+    $table->date('deadline');
+    $table->enum('status', ['open', 'closed', 'evaluating', 'awarded']);
+    $table->timestamps();
+});
+
+// Bids Table
+Schema::create('bids', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('tender_id')->constrained();
+    $table->foreignId('supplier_id')->constrained();
+    $table->decimal('amount', 10, 2);
+    $table->text('proposal');
+    $table->enum('status', ['submitted', 'under_review', 'accepted', 'rejected']);
+    $table->timestamps();
+});
+
+// Purchase Orders Table
+Schema::create('purchase_orders', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('purchase_request_id')->constrained();
+    $table->foreignId('supplier_id')->constrained();
+    $table->string('po_number')->unique();
+    $table->date('delivery_date');
+    $table->enum('status', ['draft', 'issued', 'acknowledged', 'fulfilled']);
+    $table->timestamps();
+});
+
+// Contracts Table
+Schema::create('contracts', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('purchase_order_id')->constrained();
+    $table->foreignId('supplier_id')->constrained();
+    $table->date('start_date');
+    $table->date('end_date');
+    $table->text('terms');
+    $table->boolean('renewal_alert_sent')->default(false);
+    $table->timestamps();
+});
+
+// Shipments Table
+Schema::create('shipments', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('purchase_order_id')->constrained();
+    $table->date('expected_delivery_date');
+    $table->date('actual_delivery_date')->nullable();
+    $table->enum('status', ['pending', 'in_transit', 'delayed', 'delivered']);
+    $table->timestamps();
+});
+
+// Inventory Table
+Schema::create('inventory_items', function (Blueprint $table) {
+    $table->id();
+    $table->string('name');
+    $table->text('description');
+    $table->integer('current_stock');
+    $table->integer('minimum_stock');
+    $table->string('unit_of_measure');
+    $table->timestamps();
+});
+
+// Invoices Table
+Schema::create('invoices', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('purchase_order_id')->constrained();
+    $table->string('invoice_number')->unique();
+    $table->decimal('amount', 10, 2);
+    $table->date('due_date');
+    $table->enum('status', ['pending', 'verified', 'paid', 'disputed']);
+    $table->timestamps();
+});
+
+// Payments Table
+Schema::create('payments', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('invoice_id')->constrained();
+    $table->decimal('amount', 10, 2);
+    $table->date('payment_date');
+    $table->string('reference_number');
+    $table->timestamps();
+});
+
+// Notifications Table
+Schema::create('notifications', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('user_id')->constrained();
+    $table->string('type');
+    $table->morphs('notifiable'); // Polymorphic relation
+    $table->text('message');
+    $table->boolean('read')->default(false);
+    $table->timestamps();
+});

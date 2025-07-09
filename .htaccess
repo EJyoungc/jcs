@@ -1,0 +1,44 @@
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} -d [OR]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ ^$1 [N]
+
+RewriteCond %{REQUEST_URI} (\.\w+$) [NC]
+RewriteRule ^(.*)$ public/$1
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ server.php
+
+
+
+
+
+# RewriteEngine On
+
+# # Allow HTTP access only to /gps folder
+# RewriteCond %{REQUEST_URI} ^/gps [NC]
+# RewriteRule ^ - [L]
+
+# # Deny access to sensitive files
+# <FilesMatch "\.(htaccess|ini|log|conf)$">
+#   Deny from all
+# </FilesMatch>
+
+# # Existing rules
+# RewriteCond %{REQUEST_FILENAME} -d [OR]
+# RewriteCond %{REQUEST_FILENAME} -f
+# RewriteRule ^ - [L]
+
+# RewriteCond %{REQUEST_URI} (\.\w+$) [NC]
+# RewriteRule ^(.*)$ public/$1
+
+# RewriteCond %{REQUEST_FILENAME} !-d
+# RewriteCond %{REQUEST_FILENAME} !-f
+# RewriteRule ^ server.php
+
+# Optional: Force HTTPS for non-/gps requests
+# RewriteCond %{HTTPS} off
+# RewriteCond %{REQUEST_URI} !^/gps [NC]
+# RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]

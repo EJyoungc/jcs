@@ -1,0 +1,11 @@
+.h-200{
+    height: 200px;
+}
+
+.overflow-scroll{
+    overflow-y: scroll;
+}
+.folder:hover{
+    color: #6610f2;
+    border: solid #6610f2 1px;
+}
